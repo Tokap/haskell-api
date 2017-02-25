@@ -59,6 +59,21 @@ instance ToJSON User
 instance FromJSON User
 
 
+data CommenterInfo = CommenterInfo {
+  commenterNames  :: [String],
+  commenterEmails :: [String]
+}
+
+
+data ReturnData = ReturnData {
+  userId :: Int,
+  postTitle :: String,
+  postBody :: String,
+  commenterData :: CommenterInfo
+}
+
+
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
