@@ -20,4 +20,7 @@ executable haskellytics
   build-depends:       base >= 4.7 && < 5,
                        time,
                        scotty,
-                       aeson
+                       aeson,
+                       http-conduit,
+                       bytestring,
+                       yaml
