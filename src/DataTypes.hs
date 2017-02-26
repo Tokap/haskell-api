@@ -3,11 +3,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module DataTypes where
+import Prelude hiding (id)
 
 import Data.Monoid ((<>))
 import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics
-import Web.Scotty
+import Web.Scotty hiding (body)
 
 -- Example use:
 -- data User = User { userId :: Int, userName :: String } deriving (Show, Generic)
@@ -16,6 +17,10 @@ import Web.Scotty
 
 -------- Types are derived from the endpoint below:
 -- https://jsonplaceholder.typicode.com/posts/1
+
+--------------------------------------------------------------------------------
+------------------------------------ POSTS -------------------------------------
+--------------------------------------------------------------------------------
 
 data Post = Post {
   userId :: Int,
@@ -26,7 +31,29 @@ data Post = Post {
 instance ToJSON Post
 instance FromJSON Post
 
+makePost :: String -> String -> Int -> Int -> Post
+makePost title body userId pId = Post {
+  userId = userId,
+  id = pId,
+  title = title,
+  body = body
+}
 
+getPostUserId :: Post -> Int
+getPostUserId post = userId (post :: Post)
+
+getPostId :: Post -> Int
+getPostId post = id (post :: Post)
+
+getPostTitle :: Post -> String
+getPostTitle post = title (post :: Post)
+
+getPostBody :: Post -> String
+getPostBody post = body (post :: Post)
+
+--------------------------------------------------------------------------------
+---------------------------------- COMMENTS ------------------------------------
+--------------------------------------------------------------------------------
 data Comment = Comment {
   postId :: Int,
   name   :: String,
@@ -36,85 +63,22 @@ data Comment = Comment {
 instance ToJSON Comment
 instance FromJSON Comment
 
-
-data Address = Address {
-  street  :: String,
-  city    :: String,
-  state   :: String,
-  zipcode :: String
-} deriving (Show, Generic)
-instance ToJSON Address
-instance FromJSON Address
-
-
-data User = User {
-  id       :: Int,
-  name     :: String,
-  username :: String,
-  email    :: String,
-  address  :: Address,
-  phone    :: String
-} deriving (Show, Generic)
-instance ToJSON User
-instance FromJSON User
-
-
-data CommenterInfo = CommenterInfo {
-  commenterNames  :: [String],
-  commenterEmails :: [String]
+makeComment :: String -> String -> String -> Int -> Comment
+makeComment name email body pId = Comment {
+  postId = pId,
+  name = name,
+  email = email,
+  body = body
 }
 
+getCommentPostId :: Comment -> Int
+getCommentPostId comment = postId (comment :: Comment)
 
-data ReturnData = ReturnData {
-  userId        :: Int,
-  postTitle     :: String,
-  postBody      :: String,
-  commenterData :: CommenterInfo
-}
+getCommentName :: Comment -> String
+getCommentName comment = name (comment :: Comment)
 
+getCommentEmail :: Comment -> String
+getCommentEmail comment = email (comment :: Comment)
 
-
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
--- Incompatible with nested structure?
---
--- data Geo = Geo {
---   lat :: String,
---   lng :: String
--- } deriving (Show, Generic)
--- instance ToJSON Geo
--- instance FromJSON Geo
---
---
--- data Address = Address {
---   street  :: String,
---   suite   :: String,
---   city    :: String,
---   zipcode :: String,
---   geo     :: Geo
--- } deriving (Show, Generic)
--- instance ToJSON Address
--- instance FromJSON Address
---
---
--- data Company = Company {
---   name        :: String,
---   catchPhrase :: String,
---   bs          :: String
--- } deriving (Show, Generic)
--- instance ToJSON Company
--- instance FromJSON Company
---
--- data User = User {
---   id       :: Int,
---   name     :: String,
---   username :: String,
---   email    :: String,
---   address  :: Address,
---   phone    :: String,
---   website  :: String,
---   company  :: Company
--- } deriving (Show, Generic)
--- instance ToJSON User
--- instance FromJSON User
+getCommentBody :: Comment -> String
+getCommentBody comment = body (comment :: Comment)

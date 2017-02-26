@@ -2,7 +2,7 @@
 module Main where
 
 import Server
-import DataTypes (Post)
+import DataTypes (Post, makePost, makeComment)
 import Requests
 import Db
 
@@ -12,7 +12,7 @@ import Db
 -- import qualified Data.Yaml             as Yaml
 -- import           Network.HTTP.Simple
 
-main :: IO [Status]
+main :: IO ()
 main = do
   let connDetails = ConnectionDetails {
     host = "127.0.0.1",
@@ -21,7 +21,13 @@ main = do
     pass = "",
     db   = "ip_brolytics"
   }
-  statusQuery connDetails
+
+  let testPost = makePost "Generic Title" "Fleshed Out Post Body" 11 22
+  let testComment = makeComment "Bill" "bill@bill.com" "A lot of words go here" 1
+  -- statusQuery connDetails
+  -- z <- getPostById connDetails 1
+  z <- insertPost' connDetails testPost
+  print $ z
 
 
 
