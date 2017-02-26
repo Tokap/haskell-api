@@ -40,7 +40,7 @@ instance FromJSON Comment
 data Address = Address {
   street  :: String,
   city    :: String,
-  state    :: String,
+  state   :: String,
   zipcode :: String
 } deriving (Show, Generic)
 instance ToJSON Address
@@ -66,9 +66,9 @@ data CommenterInfo = CommenterInfo {
 
 
 data ReturnData = ReturnData {
-  userId :: Int,
-  postTitle :: String,
-  postBody :: String,
+  userId        :: Int,
+  postTitle     :: String,
+  postBody      :: String,
   commenterData :: CommenterInfo
 }
 

@@ -6,6 +6,7 @@ import           DataTypes
 import           Data.Aeson
 import           Network.HTTP.Simple
 
+
 printFirstPost :: IO ()
 printFirstPost = do
     request <- parseRequest "GET https://jsonplaceholder.typicode.com/posts"

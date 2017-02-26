@@ -36,7 +36,7 @@ startServer = do
     get "/users" $ do
       json allUsers
 
-    get "/users/:id" $ do
+    get "/users/:id" $ do -- EXAMPLE OF HOW TO FILTER:
       id <- param "id"
       json (filter (matchesId id) allUsers)
 
