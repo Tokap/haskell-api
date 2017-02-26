@@ -1,46 +1,84 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module Server where
 
 import Data.Monoid ((<>))
 import Data.Aeson (FromJSON, ToJSON)
-import GHC.Generics
 import Web.Scotty
+import Control.Monad.IO.Class
 
-data User = User { userId :: Int, userName :: String } deriving (Show, Generic)
-instance ToJSON User
-instance FromJSON User
+import Db
+import DataTypes (Post, Comment)
+import Requests as Req
 
-bob :: User
-bob = User { userId = 1, userName = "bob" }
 
-jenny :: User
-jenny = User { userId = 2, userName = "jenny" }
+myConnDetails :: ConnectionDetails
+myConnDetails = ConnectionDetails {
+  host = "127.0.0.1",
+  port = 3306,
+  user = "root",
+  pass = "",
+  db   = "ip_brolytics"
+}
 
-allUsers :: [User]
-allUsers = [bob, jenny]
 
-matchesId :: Int -> User -> Bool
-matchesId id user = userId user == id
+----- POST JSON:
+-- {
+-- "userId": 5,
+-- "id": 51,
+-- "title":"A Title",
+-- "body":"A body"
+-- }
+
+----- COMMENT JSON:
+-- {
+-- "postId": 5,
+-- "name": "Terrible Terry Tate",
+-- "email":"terry@tatemail.com",
+-- "body":"A body"
+-- }
 
 startServer :: IO ()
 startServer = do
-  putStrLn "Starting Server..."
+  putStrLn "Starting Server on Port: 3000"
 
   scotty 3000 $ do
+
+----------- GET REQ
     get "/hello/:name" $ do
       name <- param "name"
       text ("hello " <> name <> "!")
 
-    get "/users" $ do
-      json allUsers
+    get "/posts" $ do
+      allPosts <- liftAndCatchIO $ getAllPosts myConnDetails :: ActionM [Post]
+      json (allPosts :: [Post])
 
-    get "/users/:id" $ do -- EXAMPLE OF HOW TO FILTER:
-      id <- param "id"
-      json (filter (matchesId id) allUsers)
+    get "/comments" $ do
+      allComments <- liftAndCatchIO $ getAllComments myConnDetails :: ActionM [Comment]
+      json (allComments :: [Comment])
 
-    -- assignment: post user and print it out
-    post "/users" $ do
-      user <- jsonData :: ActionM User
-      json user
+    get "/comments/add" $ do
+      comment <- liftAndCatchIO $ Req.getComment :: ActionM Comment
+      json (comment :: Comment)
+
+
+-------- POST REQ
+    post "/posts" $ do
+      newPost <- jsonData :: ActionM Post
+      confSave <- liftAndCatchIO $ insertPost' myConnDetails newPost
+      json newPost
+
+    post "/comments" $ do
+      newComment <- jsonData :: ActionM Comment
+      confSave <- liftAndCatchIO $ insertComment myConnDetails newComment
+      json newComment
+
+    post "/posts/add" $ do
+      newPost <- liftAndCatchIO $ Req.getPost :: ActionM Post
+      confSave <- liftAndCatchIO $ insertPost' myConnDetails newPost
+      json (newPost :: Post)
+
+    post "/comments/add" $ do
+      comment <- liftAndCatchIO $ Req.getComment :: ActionM Comment
+      confSave <- liftAndCatchIO $ insertComment myConnDetails comment
+      json (comment :: Comment)

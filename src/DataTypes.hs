@@ -10,13 +10,9 @@ import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics
 import Web.Scotty hiding (body)
 
--- Example use:
--- data User = User { userId :: Int, userName :: String } deriving (Show, Generic)
--- instance ToJSON User
--- instance FromJSON User
-
--------- Types are derived from the endpoint below:
--- https://jsonplaceholder.typicode.com/posts/1
+-------- Types are derived from the endpoints below:
+-- https://jsonplaceholder.typicode.com/posts
+-- https://jsonplaceholder.typicode.com/comments
 
 --------------------------------------------------------------------------------
 ------------------------------------ POSTS -------------------------------------

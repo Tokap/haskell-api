@@ -38,16 +38,3 @@ getComment = do
 
     let commentOutput = getResponseBody response :: Comment
     return commentOutput
-
-------------------------------- Removed User Option ----------------------------
--- printFirstUser :: IO ()
--- printFirstUser = do
---     request <- parseRequest "GET https://jsonplaceholder.typicode.com/users"
---     response <- httpJSON request
---
---     let userOutput = getResponseBody response :: [User]
---     let first = userOutput !! 0
---     print $ name first
-
--- getName :: User -> String
--- getName u = name u
