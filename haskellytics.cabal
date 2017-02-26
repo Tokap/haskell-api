@@ -23,7 +23,4 @@ executable haskellytics
                      , http-conduit
                      , mysql
                      , mysql-simple
-                     , bytestring
-                     , yaml
                      , time
-                     , text

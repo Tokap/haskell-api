@@ -81,6 +81,7 @@ getPostById connDetails i = do
 
   return $ map ( \(t, b, i, ui) -> makePost t b i ui) xs
 
+
 -- INSERT: (returns number of affected rows)
 insertPost :: ConnectionDetails -> Post -> IO Int64
 insertPost connDetails post = do
@@ -115,6 +116,7 @@ selectCommentQuery = "SELECT name,email,body,postId FROM comment_table WHERE id=
 insertCommentStatement :: Query
 insertCommentStatement = "INSERT into comment_table (name,email,body,postId) VALUES (?,?,?,?)"
 
+
 -- READ:
 getAllComments :: ConnectionDetails -> IO [Comment]
 getAllComments connDetails = do
@@ -129,6 +131,7 @@ getCommentById connDetails i = do
   xs <- query conn selectCommentQuery [(i :: Int)]
 
   return $ map (\(n, e, b, pid) -> makeComment n e b pid) xs
+
 
 -- INSERT: (returns number of affected rows)
 insertComment :: ConnectionDetails -> Comment -> IO Int64

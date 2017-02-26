@@ -2,10 +2,7 @@
 
 module Server where
 
-import Data.Monoid ((<>))
-import Data.Aeson (FromJSON, ToJSON)
 import Web.Scotty
-import Control.Monad.IO.Class
 
 import Db
 import DataTypes (Post, Comment)
@@ -22,32 +19,15 @@ myConnDetails = ConnectionDetails {
 }
 
 
------ POST JSON:
--- {
--- "userId": 5,
--- "id": 51,
--- "title":"A Title",
--- "body":"A body"
--- }
-
------ COMMENT JSON:
--- {
--- "postId": 5,
--- "name": "Terrible Terry Tate",
--- "email":"terry@tatemail.com",
--- "body":"A body"
--- }
 
 startServer :: IO ()
 startServer = do
   putStrLn "Starting Server on Port: 3000"
 
   scotty 3000 $ do
-
------------ GET REQ
-    get "/hello/:name" $ do
-      name <- param "name"
-      text ("hello " <> name <> "!")
+--------------------------------------------------------------------------------
+---------------------------------- Get Reqs ------------------------------------
+--------------------------------------------------------------------------------
 
     get "/posts" $ do
       allPosts <- liftAndCatchIO $ getAllPosts myConnDetails :: ActionM [Post]
@@ -57,28 +37,38 @@ startServer = do
       allComments <- liftAndCatchIO $ getAllComments myConnDetails :: ActionM [Comment]
       json (allComments :: [Comment])
 
-    get "/comments/add" $ do
-      comment <- liftAndCatchIO $ Req.getComment :: ActionM Comment
-      json (comment :: Comment)
+--------------------------------------------------------------------------------
+---------------------------------- Post Reqs -----------------------------------
+--------------------------------------------------------------------------------
 
-
--------- POST REQ
-    post "/posts" $ do
-      newPost <- jsonData :: ActionM Post
-      confSave <- liftAndCatchIO $ insertPost' myConnDetails newPost
-      json newPost
-
+--- COMMENTS:
     post "/comments" $ do
       newComment <- jsonData :: ActionM Comment
       confSave <- liftAndCatchIO $ insertComment myConnDetails newComment
       json newComment
+
+    post "/comments/add" $ do
+      comment <- liftAndCatchIO $ Req.getComment :: ActionM Comment
+      confSave <- liftAndCatchIO $ insertComment myConnDetails comment
+      json (comment :: Comment)
+
+    post "/comments/add/alot" $ do
+      newComments <- liftAndCatchIO $ Req.getComments :: ActionM [Comment]
+      confSave <- liftAndCatchIO $ mapM (insertComment myConnDetails) newComments
+      json (newComments :: [Comment])
+
+--- POSTS:
+    post "/posts" $ do
+      newPost <- jsonData :: ActionM Post
+      confSave <- liftAndCatchIO $ insertPost' myConnDetails newPost
+      json newPost
 
     post "/posts/add" $ do
       newPost <- liftAndCatchIO $ Req.getPost :: ActionM Post
       confSave <- liftAndCatchIO $ insertPost' myConnDetails newPost
       json (newPost :: Post)
 
-    post "/comments/add" $ do
-      comment <- liftAndCatchIO $ Req.getComment :: ActionM Comment
-      confSave <- liftAndCatchIO $ insertComment myConnDetails comment
-      json (comment :: Comment)
+    post "/posts/add/alot" $ do
+      newPosts <- liftAndCatchIO $ Req.getPosts :: ActionM [Post]
+      confSave <- liftAndCatchIO $ mapM (insertPost' myConnDetails) newPosts
+      json (newPosts :: [Post])

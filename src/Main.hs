@@ -5,15 +5,27 @@ import Server
 import Db
 
 main :: IO ()
-main = do
+main = startServer
 
-  -- let connDetails = ConnectionDetails {
-  --   host = "127.0.0.1",
-  --   port = 3306,
-  --   user = "root",
-  --   pass = "",
-  --   db   = "ip_brolytics"
-  -- }
-  --
 
-  startServer
+
+
+
+--------------------------------------------------------------------------------
+--------------------------- Example Content ------------------------------------
+--------------------------------------------------------------------------------
+----- POST JSON:
+-- {
+-- "userId": 5,
+-- "id": 51,
+-- "title":"A Title",
+-- "body":"A body"
+-- }
+
+----- COMMENT JSON:
+-- {
+-- "postId": 5,
+-- "name": "Terrible Terry Tate",
+-- "email":"terry@tatemail.com",
+-- "body":"A body"
+-- }
