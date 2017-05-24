@@ -15,7 +15,7 @@ myConnDetails = ConnectionDetails {
   port = 3306,
   user = "root",
   pass = "",
-  db   = "ip_brolytics"
+  db   = "test_db"
 }
 
 
